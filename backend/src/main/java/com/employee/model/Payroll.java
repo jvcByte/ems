@@ -32,59 +32,25 @@ public class Payroll {
     private String paymentStatus; // Paid, Pending, Failed
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Employee getEmployee() { return employee; }
+    public void setEmployee(Employee employee) { this.employee = employee; }
 
-    public Employee getEmployee() {
-        return employee;
-    }
+    public Date getPaymentDate() { return paymentDate; }
+    public void setPaymentDate(Date paymentDate) { this.paymentDate = paymentDate; }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
+    public BigDecimal getBasicSalary() { return basicSalary; }
+    public void setBasicSalary(BigDecimal basicSalary) { this.basicSalary = basicSalary; }
 
-    public Date getPaymentDate() {
-        return paymentDate;
-    }
+    public BigDecimal getDeductions() { return deductions; }
+    public void setDeductions(BigDecimal deductions) { this.deductions = deductions; }
 
-    public void setPaymentDate(Date paymentDate) {
-        this.paymentDate = paymentDate;
-    }
+    public BigDecimal getNetSalary() { return netSalary; }
+    public void setNetSalary(BigDecimal netSalary) { this.netSalary = netSalary; }
 
-    public BigDecimal getBasicSalary() {
-        return basicSalary;
-    }
-
-    public void setBasicSalary(BigDecimal basicSalary) {
-        this.basicSalary = basicSalary;
-    }
-
-    public BigDecimal getDeductions() {
-        return deductions;
-    }
-
-    public void setDeductions(BigDecimal deductions) {
-        this.deductions = deductions;
-    }
-
-    public BigDecimal getNetSalary() {
-        return netSalary;
-    }
-
-    public void setNetSalary(BigDecimal netSalary) {
-        this.netSalary = netSalary;
-    }
-
-    public String getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
     }
 }

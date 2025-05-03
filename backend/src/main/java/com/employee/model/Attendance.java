@@ -28,51 +28,21 @@ public class Attendance {
     private String status; // Present, Late, Absent
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Employee getEmployee() { return employee; }
+    public void setEmployee(Employee employee) { this.employee = employee; }
 
-    public Employee getEmployee() {
-        return employee;
-    }
+    public Date getDate() { return date; }
+    public void setDate(Date date) { this.date = date; }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
+    public Date getCheckInTime() { return checkInTime; }
+    public void setCheckInTime(Date checkInTime) { this.checkInTime = checkInTime; }
 
-    public Date getDate() {
-        return date;
-    }
+    public Date getCheckOutTime() { return checkOutTime; }
+    public void setCheckOutTime(Date checkOutTime) { this.checkOutTime = checkOutTime; }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Date getCheckInTime() {
-        return checkInTime;
-    }
-
-    public void setCheckInTime(Date checkInTime) {
-        this.checkInTime = checkInTime;
-    }
-
-    public Date getCheckOutTime() {
-        return checkOutTime;
-    }
-
-    public void setCheckOutTime(Date checkOutTime) {
-        this.checkOutTime = checkOutTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
