@@ -17,13 +17,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md border border-blue-100">
-        <h2 className="text-2xl font-bold text-center mb-6 text-blue-900">Employee Portal</h2>
+        <h2 className="text-2xl font-bold text-center mb-6 text-blue-900">Admin Login</h2>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1 text-blue-700">Username</label>
             <input
               name="username"
-              className="w-full p-2 border rounded border-blue-300 focus:border-blue-600 focus:outline-none"
+              className="text-gray-600 w-full p-2 border rounded border-blue-300 focus:border-blue-600 focus:outline-none"
               defaultValue="admin"
               required
             />
@@ -33,7 +33,7 @@ export default function LoginPage() {
             <input
               name="password"
               type="password"
-              className="w-full p-2 border rounded border-blue-300 focus:border-blue-600 focus:outline-none"
+              className=" text-gray-600 w-full p-2 border rounded border-blue-300 focus:border-blue-600 focus:outline-none"
               defaultValue="admin123"
               required
             />
