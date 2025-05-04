@@ -146,8 +146,8 @@ INSERT INTO public.Projects (project_id, project_name, start_date, end_date, sta
 (4, 'Financial System Upgrade', '2023-02-01', '2023-04-30', 'Planning', 'Migration to new accounting software', 5, 60000),
 (5, 'Office Relocation', '2023-03-01', '2023-03-31', 'Planning', 'Move to new headquarters', 6, 150000);
 
--- 11. Seed EmployeeProjects (junction table)
-INSERT INTO public.EmployeeProjects (project_id, employee_id, role, start_date, hours_allocated) VALUES
+-- 11. Seed Employee_Projects (junction table)
+INSERT INTO public.Employee_Projects (project_id, employee_id, role, start_date, hours_allocated) VALUES
 (1, 3, 'Lead Developer', '2023-01-01', 200),
 (1, 8, 'Frontend Developer', '2023-01-01', 150),
 (1, 10, 'Backend Developer', '2023-01-01', 150),
@@ -207,8 +207,8 @@ INSERT INTO public.User_Roles (user_id, role_id) VALUES
 (8, 4), -- James Wilson - Employee
 (9, 2); -- Jennifer Davis - HR Manager
 
--- 16. Seed AuditLogs (depends on Users)
-INSERT INTO public.AuditLogs (user_id, action, table_affected, record_id, old_value, new_value, ip_address) VALUES
+-- 16. Seed Audit_Logs (depends on Users)
+INSERT INTO public.Audit_Logs (user_id, action, table_affected, record_id, old_value, new_value, ip_address) VALUES
 (1, 'CREATE', 'Employees', '15', NULL, '{"first_name":"Patricia","last_name":"White"}', '192.168.1.100'),
 (2, 'UPDATE', 'Leaves', '3', '{"status":"Pending"}', '{"status":"Approved"}', '192.168.1.101'),
 (3, 'CREATE', 'Projects', '1', NULL, '{"project_name":"Website Redesign"}', '192.168.1.102'),

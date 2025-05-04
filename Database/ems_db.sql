@@ -6,12 +6,12 @@ DROP TABLE IF EXISTS public.Resignations CASCADE;
 DROP TABLE IF EXISTS public.Promotions CASCADE;
 DROP TABLE IF EXISTS public.Assets CASCADE;
 DROP TABLE IF EXISTS public.Shifts CASCADE;
-DROP TABLE IF EXISTS public.AuditLogs CASCADE;
+DROP TABLE IF EXISTS public.Audit_Logs CASCADE;
 DROP TABLE IF EXISTS public.User_Roles CASCADE;
 DROP TABLE IF EXISTS public.Roles CASCADE;
 DROP TABLE IF EXISTS public.Users CASCADE;
 DROP TABLE IF EXISTS public.Documents CASCADE;
-DROP TABLE IF EXISTS public.EmployeeProjects CASCADE;
+DROP TABLE IF EXISTS public.Employee_Projects CASCADE;
 DROP TABLE IF EXISTS public.Projects CASCADE;
 DROP TABLE IF EXISTS public.Training CASCADE;
 DROP TABLE IF EXISTS public.Performance CASCADE;
@@ -172,7 +172,7 @@ CREATE TABLE public.Projects (
 );
 
 -- EmployeeProjects (Junction Table)
-CREATE TABLE public.EmployeeProjects (
+CREATE TABLE public.Employee_Projects (
     id SERIAL PRIMARY KEY,
     project_id INTEGER NOT NULL,
     employee_id INTEGER NOT NULL,
@@ -227,7 +227,7 @@ CREATE TABLE public.User_Roles (
 );
 
 -- Audit Logs Table
-CREATE TABLE public.AuditLogs (
+CREATE TABLE public.Audit_Logs (
     log_id SERIAL PRIMARY KEY,
     user_id INTEGER,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

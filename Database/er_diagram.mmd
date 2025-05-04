@@ -15,8 +15,8 @@ erDiagram
     
     DEPARTMENTS ||--o{ POSITIONS : contains
     
-    PROJECTS }|--o{ EMPLOYEEPROJECTS : has
-    EMPLOYEES }|--o{ EMPLOYEEPROJECTS : assigned_to
+    PROJECTS }|--o{ EMPLOYEE_PROJECTS : has
+    EMPLOYEES }|--o{ EMPLOYEE_PROJECTS : assigned_to
     
     USERS }|--o{ ROLES : assigned
     USERS ||--o{ AUDIT_LOGS : generates
@@ -119,7 +119,7 @@ erDiagram
         decimal budget
     }
     
-    EMPLOYEEPROJECTS {
+    EMPLOYEE_PROJECTS {
         int id PK
         int project_id FK
         int employee_id FK
