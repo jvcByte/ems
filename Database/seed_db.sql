@@ -1,197 +1,255 @@
-   
-    -- Seed Script for PostgreSQL HR Database
+end;-- Start transaction
+BEGIN;
 
--- Insert data into Employees table (with self-referencing foreign key)
--- First insert managers with NULL reporting_manager_id
-INSERT INTO Employees (first_name, last_name, email, phone, date_of_birth, address, hire_date, status, emergency_contact)
-VALUES 
-('John', 'Smith', 'john.smith@company.com', '555-123-4567', '1975-05-15', '123 Main St, City, State 12345', '2010-01-10', 'Active', 'Jane Smith (Wife): 555-123-4568'),
-('Sarah', 'Johnson', 'sarah.johnson@company.com', '555-234-5678', '1980-08-21', '456 Oak Ave, City, State 12345', '2012-03-15', 'Active', 'Michael Johnson (Husband): 555-234-5679'),
-('Michael', 'Williams', 'michael.williams@company.com', '555-345-6789', '1978-11-30', '789 Pine Rd, City, State 12345', '2011-07-20', 'Active', 'Emily Williams (Wife): 555-345-6780');
+-- 1. First create Departments (parent table with no dependencies)
+INSERT INTO public.Departments (department_id, department_name, location, description) VALUES
+(1, 'Executive', 'Floor 10', 'Company leadership and strategy'),
+(2, 'Human Resources', 'Floor 5', 'Employee relations and benefits'),
+(3, 'Engineering', 'Floor 7', 'Product development'),
+(4, 'Marketing', 'Floor 3', 'Brand management and advertising'),
+(5, 'Finance', 'Floor 2', 'Accounting and financial operations'),
+(6, 'Operations', 'Floor 1', 'Day-to-day business operations'),
+(7, 'IT', 'Floor 6', 'Technology infrastructure');
 
--- Now insert employees with manager references
-INSERT INTO Employees (first_name, last_name, email, phone, date_of_birth, address, hire_date, status, emergency_contact, reporting_manager_id)
-VALUES 
-('Robert', 'Jones', 'robert.jones@company.com', '555-456-7890', '1985-04-12', '321 Elm St, City, State 12345', '2015-02-15', 'Active', 'Lisa Jones (Wife): 555-456-7891', 1),
-('Jennifer', 'Brown', 'jennifer.brown@company.com', '555-567-8901', '1990-07-23', '654 Maple Dr, City, State 12345', '2017-05-10', 'Active', 'David Brown (Husband): 555-567-8902', 1),
-('David', 'Miller', 'david.miller@company.com', '555-678-9012', '1983-09-05', '987 Cedar Ln, City, State 12345', '2014-11-05', 'Active', 'Karen Miller (Wife): 555-678-9013', 2),
-('Emily', 'Davis', 'emily.davis@company.com', '555-789-0123', '1988-12-15', '741 Birch Blvd, City, State 12345', '2016-08-20', 'Active', 'Thomas Davis (Husband): 555-789-0124', 2),
-('James', 'Wilson', 'james.wilson@company.com', '555-890-1234', '1982-03-25', '852 Willow Way, City, State 12345', '2013-06-12', 'Active', 'Mary Wilson (Wife): 555-890-1235', 3),
-('Jessica', 'Taylor', 'jessica.taylor@company.com', '555-901-2345', '1987-06-30', '963 Spruce St, City, State 12345', '2018-04-18', 'On Leave', 'Mark Taylor (Husband): 555-901-2346', 3),
-('Daniel', 'Anderson', 'daniel.anderson@company.com', '555-012-3456', '1992-01-20', '159 Aspen Ave, City, State 12345', '2019-10-05', 'Active', 'Laura Anderson (Wife): 555-012-3457', 1);
+-- 2. Now create Positions (depends on Departments)
+INSERT INTO public.Positions (position_id, job_title, department_id, salary_grade, responsibilities) VALUES
+(1, 'CEO', 1, 250000, 'Overall company leadership'),
+(2, 'HR Director', 2, 120000, 'HR strategy and management'),
+(3, 'Senior Software Engineer', 3, 110000, 'Technical leadership and development'),
+(4, 'Marketing Manager', 4, 95000, 'Marketing campaigns and strategy'),
+(5, 'Accountant', 5, 75000, 'Financial reporting and analysis'),
+(6, 'Operations Manager', 6, 85000, 'Process optimization'),
+(7, 'IT Support Specialist', 7, 60000, 'Technical support and maintenance'),
+(8, 'Junior Software Engineer', 3, 70000, 'Feature development and testing'),
+(9, 'HR Generalist', 2, 65000, 'Employee relations and benefits administration');
 
--- Insert data into Departments table
-INSERT INTO Departments (department_name, location, manager_id, description)
-VALUES 
-('Human Resources', 'Floor 2, East Wing', 1, 'Responsible for recruitment, employee relations, and organizational development'),
-('Engineering', 'Floor 3, North Wing', 2, 'Designs, develops, and maintains company software and hardware systems'),
-('Marketing', 'Floor 2, West Wing', 3, 'Develops and implements marketing strategies to promote products and services');
+-- 3. Create Employees (depends on Positions)
+-- First ensure position_id column exists
+ALTER TABLE public.Employees ADD COLUMN IF NOT EXISTS position_id INTEGER REFERENCES public.Positions(position_id);
 
--- Insert data into Positions table
-INSERT INTO Positions (job_title, description, department_id, salary_grade, responsibilities)
-VALUES 
-('HR Director', 'Leads the HR department and develops HR strategies', 1, 8.5, 'Strategic planning, policy development, leadership'),
-('HR Manager', 'Manages HR operations and staff', 1, 7.0, 'Employee relations, performance management, recruitment'),
-('HR Specialist', 'Handles specific HR functions', 1, 5.5, 'Benefits administration, onboarding, compliance'),
-('Engineering Director', 'Leads the engineering team and technical initiatives', 2, 9.0, 'Technical leadership, product roadmap, architecture decisions'),
-('Senior Software Engineer', 'Develops advanced software solutions', 2, 7.5, 'Software architecture, code reviews, mentoring'),
-('Software Engineer', 'Develops and maintains software', 2, 6.0, 'Coding, testing, debugging, documentation'),
-('Marketing Director', 'Leads marketing strategies and campaigns', 3, 8.5, 'Brand strategy, market research, campaign planning'),
-('Marketing Manager', 'Manages marketing projects and team', 3, 7.0, 'Project management, content strategy, analytics'),
-('Marketing Specialist', 'Executes marketing initiatives', 3, 5.5, 'Content creation, social media management, event coordination');
+-- Insert CEO first (no manager)
+INSERT INTO public.Employees (employee_id, first_name, last_name, email, phone, date_of_birth, address, hire_date, status, position_id) VALUES
+(1, 'John', 'Smith', 'john.smith@company.com', '555-0101', '1975-03-15', '123 Executive Blvd, Suite 100', '2010-01-15', 'Active', 1);
 
--- Insert data into Salaries table
-INSERT INTO Salaries (employee_id, base_salary, bonuses, deductions, effective_date, currency, payment_type)
-VALUES 
-(1, 120000.00, 15000.00, 2000.00, '2023-01-01', 'USD', 'Monthly'),
-(2, 115000.00, 12000.00, 1900.00, '2023-01-01', 'USD', 'Monthly'),
-(3, 110000.00, 11000.00, 1800.00, '2023-01-01', 'USD', 'Monthly'),
-(4, 85000.00, 8000.00, 1500.00, '2023-01-01', 'USD', 'Monthly'),
-(5, 75000.00, 7000.00, 1300.00, '2023-01-01', 'USD', 'Bi-weekly'),
-(6, 90000.00, 9000.00, 1600.00, '2023-01-01', 'USD', 'Bi-weekly'),
-(7, 80000.00, 7500.00, 1400.00, '2023-01-01', 'USD', 'Bi-weekly'),
-(8, 95000.00, 9500.00, 1700.00, '2023-01-01', 'USD', 'Monthly'),
-(9, 70000.00, 6500.00, 1200.00, '2023-01-01', 'USD', 'Bi-weekly'),
-(10, 65000.00, 6000.00, 1100.00, '2023-01-01', 'USD', 'Bi-weekly');
+-- Insert other managers (report to CEO)
+INSERT INTO public.Employees (employee_id, first_name, last_name, email, phone, date_of_birth, address, hire_date, status, reporting_manager_id, position_id) VALUES
+(2, 'Sarah', 'Johnson', 'sarah.johnson@company.com', '555-0102', '1980-07-22', '456 HR Lane', '2015-06-10', 'Active', 1, 2),
+(3, 'Michael', 'Chen', 'michael.chen@company.com', '555-0103', '1982-11-05', '789 Engineer St', '2018-03-22', 'Active', 1, 3),
+(4, 'Emily', 'Williams', 'emily.williams@company.com', '555-0104', '1985-09-18', '321 Marketing Ave', '2019-02-14', 'Active', 1, 4),
+(5, 'David', 'Brown', 'david.brown@company.com', '555-0105', '1978-12-30', '654 Finance Rd', '2017-08-05', 'Active', 1, 5),
+(6, 'Jessica', 'Lee', 'jessica.lee@company.com', '555-0106', '1983-04-25', '987 Operations Way', '2016-11-15', 'Active', 1, 6),
+(7, 'Robert', 'Taylor', 'robert.taylor@company.com', '555-0107', '1987-06-12', '135 IT Circle', '2020-01-30', 'Active', 1, 7);
 
--- Insert data into Attendance table
-INSERT INTO Attendance (employee_id, check_in, check_out, status, attendance_date, notes)
-VALUES 
-(4, '2023-05-01 09:00:00', '2023-05-01 17:30:00', 'Present', '2023-05-01', NULL),
-(5, '2023-05-01 08:45:00', '2023-05-01 17:15:00', 'Present', '2023-05-01', NULL),
-(6, '2023-05-01 09:15:00', '2023-05-01 17:45:00', 'Late', '2023-05-01', 'Traffic delay'),
-(7, '2023-05-01 08:30:00', '2023-05-01 16:30:00', 'Present', '2023-05-01', NULL),
-(8, '2023-05-01 09:00:00', '2023-05-01 17:00:00', 'Present', '2023-05-01', NULL),
-(9, NULL, NULL, 'Absent', '2023-05-01', 'Sick leave'),
-(10, NULL, NULL, 'Work from home', '2023-05-01', 'Approved remote work');
+-- Now update department managers (after employees exist)
+UPDATE public.Departments SET manager_id = 1 WHERE department_id = 1;
+UPDATE public.Departments SET manager_id = 2 WHERE department_id = 2;
+UPDATE public.Departments SET manager_id = 3 WHERE department_id = 3;
+UPDATE public.Departments SET manager_id = 4 WHERE department_id = 4;
+UPDATE public.Departments SET manager_id = 5 WHERE department_id = 5;
+UPDATE public.Departments SET manager_id = 6 WHERE department_id = 6;
+UPDATE public.Departments SET manager_id = 7 WHERE department_id = 7;
 
--- Insert data into Leaves table
-INSERT INTO Leaves (employee_id, start_date, end_date, leave_type, status, reason, approver_id)
-VALUES 
-(5, '2023-05-10', '2023-05-12', 'Vacation', 'Approved', 'Family trip', 1),
-(6, '2023-05-15', '2023-05-15', 'Personal', 'Approved', 'Personal appointment', 2),
-(7, '2023-05-20', '2023-05-21', 'Sick', 'Approved', 'Doctor advised rest', 2),
-(9, '2023-05-01', '2023-05-02', 'Sick', 'Approved', 'Flu', 3),
-(10, '2023-05-25', '2023-05-26', 'Vacation', 'Pending', 'Weekend getaway', 1);
+-- Insert remaining employees
+INSERT INTO public.Employees (employee_id, first_name, last_name, email, phone, date_of_birth, address, hire_date, status, reporting_manager_id, position_id) VALUES
+(8, 'James', 'Wilson', 'james.wilson@company.com', '555-0201', '1990-05-20', '246 Engineer St', '2021-04-10', 'Active', 3, 8),
+(9, 'Jennifer', 'Davis', 'jennifer.davis@company.com', '555-0202', '1992-08-15', '357 HR Lane', '2021-07-22', 'Active', 2, 9),
+(10, 'Daniel', 'Martinez', 'daniel.martinez@company.com', '555-0203', '1991-01-30', '468 Marketing Ave', '2022-01-05', 'Active', 4, 4),
+(11, 'Lisa', 'Anderson', 'lisa.anderson@company.com', '555-0204', '1989-03-12', '579 Finance Rd', '2020-09-15', 'Active', 5, 5),
+(12, 'Thomas', 'Thomas', 'thomas.thomas@company.com', '555-0205', '1993-07-08', '680 Operations Way', '2022-03-01', 'Active', 6, 6),
+(13, 'Patricia', 'White', 'patricia.white@company.com', '555-0206', '1988-11-25', '791 IT Circle', '2021-10-18', 'Active', 7, 7),
+(14, 'Christopher', 'Garcia', 'christopher.garcia@company.com', '555-0207', '1994-02-14', '802 Engineer St', '2023-02-28', 'Active', 3, 8),
+(15, 'Amanda', 'Rodriguez', 'amanda.rodriguez@company.com', '555-0208', '1995-09-03', '913 HR Lane', '2023-05-15', 'Active', 2, 9);
 
--- Insert data into Performance table
-INSERT INTO Performance (employee_id, review_date, reviewer_id, rating, comments, goals, next_review_date)
-VALUES 
-(4, '2022-12-15', 1, 4, 'Excellent team player, consistently meets deadlines', 'Focus on leadership skills development', '2023-12-15'),
-(5, '2022-12-15', 1, 3, 'Good performance, needs improvement in communication', 'Enhance communication skills', '2023-12-15'),
-(6, '2022-12-15', 2, 5, 'Outstanding performance, exceeds expectations', 'Work on advanced technical skills', '2023-12-15'),
-(7, '2022-12-15', 2, 4, 'Strong performer, reliable team member', 'Develop project management skills', '2023-12-15'),
-(8, '2022-12-15', 3, 3, 'Meets expectations, room for growth', 'Improve analytical thinking', '2023-12-15'),
-(9, '2022-12-15', 3, 4, 'Creative and innovative approach', 'Enhance collaboration with other departments', '2023-12-15'),
-(10, '2022-12-15', 1, 3, 'Satisfactory performance, on track for growth', 'Develop technical expertise', '2023-12-15');
+-- 4. Seed Salaries (depends on Employees)
+INSERT INTO public.Salaries (employee_id, base_salary, bonuses, effective_date, end_date, currency, payment_type) VALUES
+(1, 250000, 50000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(2, 120000, 15000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(3, 110000, 20000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(4, 95000, 10000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(5, 75000, 5000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(6, 85000, 7000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(7, 60000, 3000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(8, 70000, 4000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(9, 65000, 3000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(10, 70000, 4000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(11, 65000, 3000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(12, 70000, 4000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(13, 75000, 5000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(14, 85000, 7000, '2023-01-01', NULL, 'USD', 'Monthly'),
+(15, 60000, 3000, '2023-01-01', NULL, 'USD', 'Monthly');
 
--- Insert data into Training table
-INSERT INTO Training (employee_id, training_name, start_date, end_date, provider, completed, certificate_id)
-VALUES 
-(4, 'Leadership Development', '2023-03-01', '2023-03-05', 'Leadership Institute', TRUE, 'CERT-LD-2023-1234'),
-(5, 'Communication Skills', '2023-03-15', '2023-03-16', 'Professional Development Center', TRUE, 'CERT-CS-2023-5678'),
-(6, 'Advanced Java Programming', '2023-04-10', '2023-04-14', 'Tech Academy', TRUE, 'CERT-AJP-2023-9012'),
-(7, 'Project Management Fundamentals', '2023-04-20', '2023-04-22', 'PM Institute', TRUE, 'CERT-PMF-2023-3456'),
-(8, 'Data Analysis Techniques', '2023-05-05', '2023-05-07', 'Data Science School', FALSE, NULL),
-(9, 'Digital Marketing Strategies', '2023-05-15', '2023-05-17', 'Marketing Academy', FALSE, NULL),
-(10, 'Cloud Computing Basics', '2023-05-10', '2023-05-12', 'Tech Institute', TRUE, 'CERT-CCB-2023-7890');
+-- 5. Seed Payroll (depends on Employees)
+INSERT INTO public.Payroll (employee_id, period_start, period_end, basic_salary, deductions, bonuses, net_salary, payment_date) VALUES
+(1, '2023-01-01', '2023-01-31', 20833.33, 4166.67, 4166.67, 20833.33, '2023-02-01'),
+(2, '2023-01-01', '2023-01-31', 10000.00, 2000.00, 1250.00, 9250.00, '2023-02-01'),
+(3, '2023-01-01', '2023-01-31', 9166.67, 1833.33, 1666.67, 9000.00, '2023-02-01'),
+(4, '2023-01-01', '2023-01-31', 7916.67, 1583.33, 833.33, 7166.67, '2023-02-01'),
+(5, '2023-01-01', '2023-01-31', 6250.00, 1250.00, 416.67, 5416.67, '2023-02-01'),
+(6, '2023-01-01', '2023-01-31', 7083.33, 1416.67, 583.33, 6250.00, '2023-02-01'),
+(7, '2023-01-01', '2023-01-31', 5000.00, 1000.00, 250.00, 4250.00, '2023-02-01'),
+(8, '2023-01-01', '2023-01-31', 5833.33, 1166.67, 333.33, 5000.00, '2023-02-01'),
+(9, '2023-01-01', '2023-01-31', 5416.67, 1083.33, 250.00, 4583.33, '2023-02-01');
 
--- Insert data into Projects table
-INSERT INTO Projects (project_name, start_date, end_date, status, description, manager_id, budget)
-VALUES 
-('HR System Upgrade', '2023-01-15', '2023-06-30', 'In Progress', 'Upgrading the current HR management system', 1, 50000.00),
-('Mobile App Development', '2023-02-01', '2023-08-31', 'In Progress', 'Developing a new customer-facing mobile application', 2, 75000.00),
-('Q2 Marketing Campaign', '2023-04-01', '2023-06-30', 'In Progress', 'Marketing campaign for Q2 product launch', 3, 35000.00);
+-- 6. Seed Attendance (depends on Employees)
+INSERT INTO public.Attendance (employee_id, check_in, check_out, status, attendance_date) VALUES
+(1, '2023-01-02 09:00:00', '2023-01-02 17:00:00', 'Present', '2023-01-02'),
+(2, '2023-01-02 08:45:00', '2023-01-02 17:15:00', 'Present', '2023-01-02'),
+(3, '2023-01-02 09:15:00', '2023-01-02 18:00:00', 'Present', '2023-01-02'),
+(4, '2023-01-02 09:00:00', '2023-01-02 17:30:00', 'Present', '2023-01-02'),
+(5, '2023-01-02 08:30:00', '2023-01-02 17:00:00', 'Present', '2023-01-02'),
+(6, '2023-01-02 09:00:00', '2023-01-02 17:00:00', 'Present', '2023-01-02'),
+(7, '2023-01-02 08:00:00', '2023-01-02 16:00:00', 'Present', '2023-01-02'),
+(8, '2023-01-02 09:00:00', '2023-01-02 17:00:00', 'Present', '2023-01-02'),
+(9, '2023-01-02 08:45:00', '2023-01-02 17:15:00', 'Present', '2023-01-02'),
+(1, '2023-01-03 09:00:00', '2023-01-03 17:00:00', 'Present', '2023-01-03'),
+(2, '2023-01-03 08:45:00', '2023-01-03 17:15:00', 'Present', '2023-01-03'),
+(3, '2023-01-03 09:15:00', '2023-01-03 18:00:00', 'Present', '2023-01-03'),
+(4, '2023-01-03 09:00:00', '2023-01-03 17:30:00', 'Present', '2023-01-03'),
+(5, '2023-01-03 08:30:00', '2023-01-03 17:00:00', 'Present', '2023-01-03'),
+(6, '2023-01-03 09:00:00', '2023-01-03 17:00:00', 'Present', '2023-01-03'),
+(7, '2023-01-03 08:00:00', '2023-01-03 16:00:00', 'Present', '2023-01-03'),
+(8, '2023-01-03 09:00:00', '2023-01-03 17:00:00', 'Present', '2023-01-03'),
+(9, '2023-01-03 08:45:00', '2023-01-03 17:15:00', 'Present', '2023-01-03');
 
--- Insert data into EmployeeProjects table
-INSERT INTO EmployeeProjects (project_id, employee_id, role, start_date, end_date, hours_allocated)
-VALUES 
-(1, 1, 'Project Lead', '2023-01-15', '2023-06-30', 20),
-(1, 4, 'Team Member', '2023-01-15', '2023-06-30', 15),
-(1, 5, 'Team Member', '2023-01-15', '2023-06-30', 10),
-(2, 2, 'Project Lead', '2023-02-01', '2023-08-31', 25),
-(2, 6, 'Senior Developer', '2023-02-01', '2023-08-31', 30),
-(2, 7, 'Developer', '2023-02-01', '2023-08-31', 30),
-(2, 10, 'QA Tester', '2023-02-01', '2023-08-31', 20),
-(3, 3, 'Project Lead', '2023-04-01', '2023-06-30', 15),
-(3, 8, 'Team Member', '2023-04-01', '2023-06-30', 25),
-(3, 9, 'Team Member', '2023-04-01', '2023-06-30', 25);
+-- 7. Seed Leaves (depends on Employees)
+INSERT INTO public.Leaves (employee_id, start_date, end_date, leave_type, status, reason) VALUES
+(3, '2023-01-04', '2023-01-04', 'Vacation', 'Approved', 'Personal day'),
+(9, '2023-01-04', '2023-01-06', 'Sick', 'Approved', 'Flu'),
+(5, '2023-01-15', '2023-01-20', 'Vacation', 'Approved', 'Family trip'),
+(7, '2023-01-10', '2023-01-10', 'Personal', 'Pending', 'Doctor appointment');
 
--- Insert data into Documents table
-INSERT INTO Documents (employee_id, document_type, upload_date, file_path, description, expiry_date)
-VALUES 
-(1, 'ID Proof', '2022-01-10', '/documents/employees/1/id_proof.pdf', 'National ID card', '2032-01-10'),
-(1, 'Resume', '2022-01-10', '/documents/employees/1/resume.pdf', 'Professional resume', NULL),
-(2, 'ID Proof', '2022-03-15', '/documents/employees/2/id_proof.pdf', 'National ID card', '2030-03-15'),
-(2, 'Resume', '2022-03-15', '/documents/employees/2/resume.pdf', 'Professional resume', NULL),
-(3, 'ID Proof', '2022-07-20', '/documents/employees/3/id_proof.pdf', 'National ID card', '2031-07-20'),
-(3, 'Resume', '2022-07-20', '/documents/employees/3/resume.pdf', 'Professional resume', NULL),
-(4, 'ID Proof', '2022-02-15', '/documents/employees/4/id_proof.pdf', 'National ID card', '2032-02-15'),
-(5, 'ID Proof', '2022-05-10', '/documents/employees/5/id_proof.pdf', 'National ID card', '2032-05-10');
+-- 8. Seed Performance (depends on Employees)
+INSERT INTO public.Performance (employee_id, review_date, reviewer_id, rating, comments, next_review_date) VALUES
+(1, '2022-12-15', 1, 5, 'Exceptional leadership', '2023-12-15'),
+(2, '2022-12-10', 1, 4, 'Strong HR management', '2023-12-10'),
+(3, '2022-12-05', 1, 5, 'Technical excellence', '2023-12-05'),
+(4, '2022-12-12', 1, 4, 'Creative marketing strategies', '2023-12-12'),
+(5, '2022-12-08', 1, 3, 'Solid performance, could improve reporting speed', '2023-06-08'),
+(6, '2022-12-20', 1, 4, 'Efficient operations management', '2023-12-20'),
+(7, '2022-12-18', 1, 3, 'Good technical skills, needs to improve documentation', '2023-06-18'),
+(8, '2022-12-22', 3, 4, 'Promising junior developer', '2023-06-22'),
+(9, '2022-12-14', 2, 3, 'Good HR skills, needs more confidence in decision making', '2023-06-14');
 
--- Insert data into Users table
-INSERT INTO Users (employee_id, username, password_hash, last_login, is_active, email)
-VALUES 
-(1, 'john.smith', '$2a$12$1234567890abcdefghijkl', '2023-05-01 08:45:12', TRUE, 'john.smith@company.com'),
-(2, 'sarah.johnson', '$2a$12$abcdefghijkl1234567890', '2023-05-01 08:30:45', TRUE, 'sarah.johnson@company.com'),
-(3, 'michael.williams', '$2a$12$ghijkl1234567890abcdef', '2023-05-01 08:55:23', TRUE, 'michael.williams@company.com'),
-(4, 'robert.jones', '$2a$12$jkl1234567890abcdefghi', '2023-05-01 09:05:10', TRUE, 'robert.jones@company.com'),
-(5, 'jennifer.brown', '$2a$12$567890abcdefghijkl1234', '2023-05-01 08:40:36', TRUE, 'jennifer.brown@company.com');
+-- 9. Seed Training (depends on Employees)
+INSERT INTO public.Training (employee_id, training_name, start_date, end_date, provider, completed, certificate_id) VALUES
+(3, 'Advanced Cloud Architecture', '2022-11-01', '2022-11-05', 'AWS', TRUE, 'AWS-ACA-12345'),
+(4, 'Digital Marketing Certification', '2022-10-15', '2022-12-15', 'Google', TRUE, 'G-DMC-67890'),
+(7, 'Cybersecurity Fundamentals', '2023-01-10', '2023-01-12', 'CompTIA', TRUE, 'COMPTIA-CSF-54321'),
+(8, 'React Advanced Concepts', '2023-01-15', NULL, 'Udemy', FALSE, NULL),
+(9, 'HR Compliance Training', '2022-09-01', '2022-09-30', 'SHRM', TRUE, 'SHRM-HRCT-98765');
 
--- Insert data into Roles table
-INSERT INTO Roles (role_name, description, permissions)
-VALUES 
-('Admin', 'Full system access', '{"all": true}'),
-('HR Manager', 'Access to HR functions', '{"employees": {"read": true, "write": true}, "attendance": {"read": true, "write": true}, "leaves": {"read": true, "write": true}, "performance": {"read": true, "write": true}}'),
-('Department Manager', 'Access to department data', '{"employees": {"read": true, "write": false}, "attendance": {"read": true, "write": false}, "leaves": {"read": true, "write": true}, "projects": {"read": true, "write": true}}'),
-('Employee', 'Basic access', '{"profile": {"read": true, "write": false}, "attendance": {"read": true, "write": false}, "leaves": {"read": true, "write": true}}');
+-- 10. Seed Projects (depends on Employees for manager_id)
+INSERT INTO public.Projects (project_id, project_name, start_date, end_date, status, description, manager_id, budget) VALUES
+(1, 'Website Redesign', '2023-01-01', '2023-03-31', 'In Progress', 'Complete overhaul of company website', 3, 50000),
+(2, 'HR System Implementation', '2022-12-01', '2023-02-28', 'In Progress', 'New HR management system rollout', 2, 75000),
+(3, 'Q1 Marketing Campaign', '2023-01-15', '2023-03-15', 'Planning', 'Spring product launch campaign', 4, 100000),
+(4, 'Financial System Upgrade', '2023-02-01', '2023-04-30', 'Planning', 'Migration to new accounting software', 5, 60000),
+(5, 'Office Relocation', '2023-03-01', '2023-03-31', 'Planning', 'Move to new headquarters', 6, 150000);
 
--- Insert data into User_Roles table
-INSERT INTO User_Roles (user_id, role_id, assigned_date)
-VALUES 
-(1, 1, '2023-01-01 00:00:00'),
-(1, 2, '2023-01-01 00:00:00'),
-(2, 3, '2023-01-01 00:00:00'),
-(3, 3, '2023-01-01 00:00:00'),
-(4, 4, '2023-01-01 00:00:00'),
-(5, 4, '2023-01-01 00:00:00');
+-- 11. Seed EmployeeProjects (junction table)
+INSERT INTO public.EmployeeProjects (project_id, employee_id, role, start_date, hours_allocated) VALUES
+(1, 3, 'Lead Developer', '2023-01-01', 200),
+(1, 8, 'Frontend Developer', '2023-01-01', 150),
+(1, 10, 'Backend Developer', '2023-01-01', 150),
+(2, 2, 'Project Manager', '2022-12-01', 100),
+(2, 9, 'HR Analyst', '2022-12-01', 120),
+(2, 11, 'Implementation Specialist', '2022-12-01', 180),
+(3, 4, 'Campaign Manager', '2023-01-15', 160),
+(3, 12, 'Content Creator', '2023-01-15', 120),
+(4, 5, 'Finance Lead', '2023-02-01', 80),
+(4, 13, 'Accountant', '2023-02-01', 100),
+(5, 6, 'Move Coordinator', '2023-03-01', 120),
+(5, 14, 'Logistics Manager', '2023-03-01', 100);
 
--- Insert data into AuditLogs table
-INSERT INTO AuditLogs (user_id, timestamp, action, table_affected, record_id, old_value, new_value, ip_address)
-VALUES 
-(1, '2023-05-01 10:15:23', 'UPDATE', 'Employees', '5', '{"status": "Active"}', '{"status": "On Leave"}', '192.168.1.100'),
-(2, '2023-05-01 11:30:45', 'INSERT', 'Leaves', '3', NULL, '{"employee_id": 7, "start_date": "2023-05-20", "end_date": "2023-05-21", "leave_type": "Sick"}', '192.168.1.101'),
-(3, '2023-05-01 14:20:10', 'UPDATE', 'Projects', '3', '{"status": "Planning"}', '{"status": "In Progress"}', '192.168.1.102');
+-- 12. Seed Documents (depends on Employees)
+INSERT INTO public.Documents (employee_id, document_type, upload_date, file_path, description, expiry_date) VALUES
+(1, 'Employment Contract', '2010-01-15', '/documents/1/contract.pdf', 'Original employment agreement', NULL),
+(2, 'Employment Contract', '2015-06-10', '/documents/2/contract.pdf', 'Original employment agreement', NULL),
+(3, 'Employment Contract', '2018-03-22', '/documents/3/contract.pdf', 'Original employment agreement', NULL),
+(1, 'NDA', '2010-01-20', '/documents/1/nda.pdf', 'Non-disclosure agreement', '2025-01-20'),
+(2, 'NDA', '2015-06-15', '/documents/2/nda.pdf', 'Non-disclosure agreement', '2025-06-15'),
+(3, 'NDA', '2018-03-25', '/documents/3/nda.pdf', 'Non-disclosure agreement', '2026-03-25'),
+(8, 'Resume', '2021-04-10', '/documents/8/resume.pdf', 'Most recent resume', NULL),
+(9, 'Resume', '2021-07-22', '/documents/9/resume.pdf', 'Most recent resume', NULL),
+(7, 'Certification', '2022-05-15', '/documents/7/cert_aws.pdf', 'AWS Certified Solutions Architect', '2025-05-15');
 
--- Insert data into Shifts table
-INSERT INTO Shifts (employee_id, start_time, end_time, shift_type, notes)
-VALUES 
-(4, '2023-05-02 09:00:00', '2023-05-02 17:00:00', 'Regular', NULL),
-(5, '2023-05-02 09:00:00', '2023-05-02 17:00:00', 'Regular', NULL),
-(6, '2023-05-02 09:00:00', '2023-05-02 17:00:00', 'Regular', NULL),
-(7, '2023-05-02 09:00:00', '2023-05-02 17:00:00', 'Regular', NULL),
-(8, '2023-05-02 09:00:00', '2023-05-02 17:00:00', 'Regular', NULL);
+-- 13. Seed Roles (independent table)
+INSERT INTO public.Roles (role_id, role_name, description, permissions) VALUES
+(1, 'Admin', 'Full system access', '{"all": ["create", "read", "update", "delete"]}'),
+(2, 'HR Manager', 'HR department access', '{"employees": ["create", "read", "update"], "documents": ["create", "read", "update"], "leaves": ["approve"]}'),
+(3, 'Department Head', 'Department management', '{"employees": ["read", "update"], "projects": ["create", "read", "update"]}'),
+(4, 'Employee', 'Basic employee access', '{"self": ["read", "update"], "leaves": ["create", "read"]}'),
+(5, 'Finance', 'Financial data access', '{"payroll": ["create", "read", "update"], "salaries": ["read"]}');
 
--- Insert data into Assets table
-INSERT INTO Assets (employee_id, asset_type, asset_name, serial_number, assignment_date, condition)
-VALUES 
-(1, 'Laptop', 'Dell XPS 15', 'DX15-78901', '2022-01-15', 'Excellent'),
-(1, 'Phone', 'iPhone 13', 'IP13-56789', '2022-01-15', 'Good'),
-(2, 'Laptop', 'MacBook Pro', 'MP16-23456', '2022-03-20', 'Excellent'),
-(2, 'Phone', 'iPhone 13', 'IP13-67890', '2022-03-20', 'Excellent'),
-(3, 'Laptop', 'Dell XPS 13', 'DX13-34567', '2022-07-25', 'Good'),
-(4, 'Laptop', 'Lenovo ThinkPad', 'LT14-45678', '2022-02-20', 'Good'),
-(5, 'Laptop', 'HP Spectre', 'HS13-56789', '2022-05-15', 'Excellent');
+-- 14. Seed Users (depends on Employees)
+INSERT INTO public.Users (user_id, employee_id, username, password_hash, last_login, is_active, email) VALUES
+(1, 1, 'jsmith', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-15 09:30:00', TRUE, 'john.smith@company.com'),
+(2, 2, 'sjohnson', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-15 10:15:00', TRUE, 'sarah.johnson@company.com'),
+(3, 3, 'mchen', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-14 08:45:00', TRUE, 'michael.chen@company.com'),
+(4, 4, 'ewilliams', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-14 11:20:00', TRUE, 'emily.williams@company.com'),
+(5, 5, 'dbrown', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-13 14:10:00', TRUE, 'david.brown@company.com'),
+(6, 6, 'jlee', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-13 16:30:00', TRUE, 'jessica.lee@company.com'),
+(7, 7, 'rtaylor', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-12 09:15:00', TRUE, 'robert.taylor@company.com'),
+(8, 8, 'jwilson', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-12 10:45:00', TRUE, 'james.wilson@company.com'),
+(9, 9, 'jdavis', '$2a$10$xJwL5v5Jz5UZJz5UZJz5Ue', '2023-01-11 13:20:00', TRUE, 'jennifer.davis@company.com');
 
--- Insert data into Promotions table
-INSERT INTO Promotions (employee_id, from_position_id, to_position_id, promotion_date, salary_increase, reason, recommended_by)
-VALUES 
-(4, 3, 2, '2023-01-01', 10000.00, 'Outstanding performance and leadership qualities', 1),
-(6, 6, 5, '2023-01-01', 15000.00, 'Exceptional technical skills and project contributions', 2),
-(8, 9, 8, '2023-01-01', 12000.00, 'Demonstrated creativity and campaign success', 3);
+-- 15. Seed User_Roles (junction table)
+INSERT INTO public.User_Roles (user_id, role_id) VALUES
+(1, 1), -- John Smith - Admin
+(2, 2), -- Sarah Johnson - HR Manager
+(2, 3), -- Sarah Johnson - Also Department Head
+(3, 3), -- Michael Chen - Department Head
+(4, 3), -- Emily Williams - Department Head
+(5, 3), -- David Brown - Department Head
+(5, 5), -- David Brown - Also Finance
+(6, 3), -- Jessica Lee - Department Head
+(7, 4), -- Robert Taylor - Employee
+(8, 4), -- James Wilson - Employee
+(9, 2); -- Jennifer Davis - HR Manager
 
--- Insert data into Resignations table
-INSERT INTO Resignations (employee_id, resignation_date, last_working_day, reason, exit_interview_notes, rehireable)
-VALUES 
-(9, '2023-04-15', '2023-05-15', 'Career advancement opportunity', 'Positive experience with the company, leaving for better role', TRUE);
+-- 16. Seed AuditLogs (depends on Users)
+INSERT INTO public.AuditLogs (user_id, action, table_affected, record_id, old_value, new_value, ip_address) VALUES
+(1, 'CREATE', 'Employees', '15', NULL, '{"first_name":"Patricia","last_name":"White"}', '192.168.1.100'),
+(2, 'UPDATE', 'Leaves', '3', '{"status":"Pending"}', '{"status":"Approved"}', '192.168.1.101'),
+(3, 'CREATE', 'Projects', '1', NULL, '{"project_name":"Website Redesign"}', '192.168.1.102'),
+(4, 'UPDATE', 'Employees', '12', '{"position_id":4}', '{"position_id":8}', '192.168.1.103'),
+(5, 'CREATE', 'Payroll', '5', NULL, '{"employee_id":5,"net_salary":5416.67}', '192.168.1.104');
 
+-- 17. Seed Shifts (depends on Employees)
+INSERT INTO public.Shifts (employee_id, start_time, end_time, shift_type) VALUES
+(1, '2023-01-02 09:00:00', '2023-01-02 17:00:00', 'Regular'),
+(2, '2023-01-02 08:45:00', '2023-01-02 17:15:00', 'Regular'),
+(3, '2023-01-02 09:15:00', '2023-01-02 18:00:00', 'Regular'),
+(4, '2023-01-02 09:00:00', '2023-01-02 17:30:00', 'Regular'),
+(5, '2023-01-02 08:30:00', '2023-01-02 17:00:00', 'Regular'),
+(6, '2023-01-02 09:00:00', '2023-01-02 17:00:00', 'Regular'),
+(7, '2023-01-02 08:00:00', '2023-01-02 16:00:00', 'Early'),
+(8, '2023-01-02 09:00:00', '2023-01-02 17:00:00', 'Regular'),
+(9, '2023-01-02 08:45:00', '2023-01-02 17:15:00', 'Regular');
+
+-- 18. Seed Assets (depends on Employees)
+INSERT INTO public.Assets (employee_id, asset_type, asset_name, serial_number, assignment_date, condition) VALUES
+(1, 'Laptop', 'MacBook Pro 16"', 'MPB-001', '2020-01-15', 'Excellent'),
+(2, 'Laptop', 'Dell XPS 15', 'DXP-002', '2015-06-10', 'Good'),
+(3, 'Laptop', 'MacBook Pro 14"', 'MPB-003', '2018-03-22', 'Excellent'),
+(7, 'Phone', 'iPhone 13', 'IPH-007', '2020-01-30', 'Good'),
+(8, 'Laptop', 'MacBook Air M1', 'MBA-008', '2021-04-10', 'Excellent'),
+(3, 'Monitor', 'Dell 27" 4K', 'DEL-003M', '2019-05-15', 'Good'),
+(4, 'Laptop', 'HP Spectre x360', 'HPS-004', '2019-02-14', 'Fair');
+
+-- 19. Seed Promotions (depends on Employees and Positions)
+INSERT INTO public.Promotions (employee_id, from_position_id, to_position_id, promotion_date, salary_increase, reason) VALUES
+(3, 8, 3, '2020-06-15', 20000, 'Exceptional performance as junior developer'),
+(4, 9, 4, '2020-12-01', 15000, 'Successful marketing campaigns'),
+(8, 8, 3, '2023-01-01', 10000, 'Ready for senior engineering role');
+
+-- 20. Seed Resignations (depends on Employees)
+INSERT INTO public.Resignations (employee_id, resignation_date, last_working_day, reason, rehireable) VALUES
+(10, '2022-11-15', '2022-12-15', 'Relocating to another city', TRUE),
+(12, '2022-12-01', '2023-01-01', 'Better career opportunity', FALSE);
+
+-- Update status for resigned employees
+UPDATE public.Employees SET status = 'Resigned' WHERE employee_id IN (10, 12);
+
+-- Commit transaction
+COMMIT;

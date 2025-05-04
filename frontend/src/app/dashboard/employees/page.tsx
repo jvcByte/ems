@@ -11,7 +11,9 @@ export default function EmployeesPage() {
   });
 
   if (isLoading) return <div className="text-blue-700">Loading employees...</div>;
-  if (error) return <div className="text-red-600">Error loading employees</div>;
+  // if (error) return <div className="text-red-600">Error loading employees</div>;
+  if(error) console.log(error);
+  console.log(employees);
 
   // Show fallback if EmployeeTable fails or employees is not an array
   const showFallback = !Array.isArray(employees) || employees.length === 0;
