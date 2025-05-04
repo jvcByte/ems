@@ -1,278 +1,247 @@
---
--- PostgreSQL database dump
---
+-- Create custom ENUM types first
+CREATE TYPE employee_status AS ENUM ('Active', 'On Leave', 'Terminated', 'Resigned');
+CREATE TYPE payment_type AS ENUM ('Monthly', 'Bi-weekly', 'Weekly');
+CREATE TYPE attendance_status AS ENUM ('Present', 'Absent', 'Half-day', 'Late', 'Work from home');
+CREATE TYPE leave_type AS ENUM ('Vacation', 'Sick', 'Personal', 'Maternity', 'Paternity', 'Bereavement', 'Unpaid');
+CREATE TYPE leave_status AS ENUM ('Pending', 'Approved', 'Rejected', 'Cancelled');
+CREATE TYPE project_status AS ENUM ('Planning', 'In Progress', 'On Hold', 'Completed', 'Cancelled');
 
--- Dumped from database version 17.4 (Ubuntu 17.4-1.pgdg24.04+2)
--- Dumped by pg_dump version 17.4 (Ubuntu 17.4-1.pgdg24.04+2)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: attendance; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.attendance (
-    id bigint NOT NULL,
-    employee_id bigint NOT NULL,
-    date timestamp(6) without time zone NOT NULL,
-    check_in_time timestamp without time zone,
-    check_out_time timestamp without time zone,
-    status character varying(20) NOT NULL
+-- Employees Table
+CREATE TABLE Employees (
+    employee_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    date_of_birth DATE,
+    address TEXT,
+    hire_date DATE NOT NULL,
+    status employee_status DEFAULT 'Active',
+    emergency_contact TEXT,
+    reporting_manager_id INTEGER,
+    FOREIGN KEY (reporting_manager_id) REFERENCES Employees(employee_id)
 );
 
-
-ALTER TABLE public.attendance OWNER TO postgres;
-
---
--- Name: attendance_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.attendance_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.attendance_id_seq OWNER TO postgres;
-
---
--- Name: attendance_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.attendance_id_seq OWNED BY public.attendance.id;
-
-
---
--- Name: employees; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.employees (
-    id integer NOT NULL,
-    first_name character varying(50) NOT NULL,
-    last_name character varying(50) NOT NULL,
-    email character varying(100) NOT NULL,
-    department character varying(50) NOT NULL,
-    "position" character varying(50) NOT NULL,
-    salary numeric(10,2) NOT NULL,
-    date_of_joining date NOT NULL
+-- Departments Table
+CREATE TABLE Departments (
+    department_id SERIAL PRIMARY KEY,
+    department_name VARCHAR(100) NOT NULL,
+    location VARCHAR(100),
+    manager_id INTEGER,
+    description TEXT,
+    FOREIGN KEY (manager_id) REFERENCES Employees(employee_id)
 );
 
-
-ALTER TABLE public.employees OWNER TO postgres;
-
---
--- Name: employee_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.employee_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.employee_id_seq OWNER TO postgres;
-
---
--- Name: employee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.employee_id_seq OWNED BY public.employees.id;
-
-
---
--- Name: payroll; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.payroll (
-    id bigint NOT NULL,
-    employee_id bigint NOT NULL,
-    period_start date NOT NULL,
-    period_end date NOT NULL,
-    basic_salary numeric(38,2) NOT NULL,
-    deductions numeric(38,2) DEFAULT 0,
-    bonuses numeric(10,2) DEFAULT 0,
-    net_salary numeric(38,2) NOT NULL,
-    payment_date timestamp(6) without time zone NOT NULL
+-- Positions/Job Titles Table
+CREATE TABLE Positions (
+    position_id SERIAL PRIMARY KEY,
+    job_title VARCHAR(100) NOT NULL,
+    description TEXT,
+    department_id INTEGER,
+    salary_grade DECIMAL(10,2),
+    responsibilities TEXT,
+    FOREIGN KEY (department_id) REFERENCES Departments(department_id)
 );
 
+-- Salaries Table
+CREATE TABLE Salaries (
+    salary_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    base_salary DECIMAL(10,2) NOT NULL,
+    bonuses DECIMAL(10,2) DEFAULT 0,
+    deductions DECIMAL(10,2) DEFAULT 0,
+    effective_date DATE NOT NULL,
+    end_date DATE,
+    currency VARCHAR(10) DEFAULT 'USD',
+    payment_type payment_type DEFAULT 'Monthly',
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
-ALTER TABLE public.payroll OWNER TO postgres;
+-- Attendance Table
+CREATE TABLE Attendance (
+    attendance_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    check_in TIMESTAMP,
+    check_out TIMESTAMP,
+    status attendance_status NOT NULL,
+    attendance_date DATE NOT NULL,
+    notes TEXT,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
---
--- Name: payroll_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
+-- Leaves Table
+CREATE TABLE Leaves (
+    leave_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    leave_type leave_type NOT NULL,
+    status leave_status DEFAULT 'Pending',
+    reason TEXT,
+    approver_id INTEGER,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id),
+    FOREIGN KEY (approver_id) REFERENCES Employees(employee_id)
+);
 
-CREATE SEQUENCE public.payroll_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+-- Performance Table
+CREATE TABLE Performance (
+    review_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    review_date DATE NOT NULL,
+    reviewer_id INTEGER NOT NULL,
+    rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+    comments TEXT,
+    goals TEXT,
+    next_review_date DATE,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id),
+    FOREIGN KEY (reviewer_id) REFERENCES Employees(employee_id)
+);
 
+-- Training Table
+CREATE TABLE Training (
+    training_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    training_name VARCHAR(100) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    provider VARCHAR(100),
+    completed BOOLEAN DEFAULT FALSE,
+    certificate_id VARCHAR(50),
+    expiry_date DATE,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
-ALTER SEQUENCE public.payroll_id_seq OWNER TO postgres;
+-- Projects Table
+CREATE TABLE Projects (
+    project_id SERIAL PRIMARY KEY,
+    project_name VARCHAR(100) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    status project_status DEFAULT 'Planning',
+    description TEXT,
+    manager_id INTEGER,
+    budget DECIMAL(15,2),
+    FOREIGN KEY (manager_id) REFERENCES Employees(employee_id)
+);
 
---
--- Name: payroll_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
+-- EmployeeProjects (Junction Table)
+CREATE TABLE EmployeeProjects (
+    id SERIAL PRIMARY KEY,
+    project_id INTEGER NOT NULL,
+    employee_id INTEGER NOT NULL,
+    role VARCHAR(50),
+    start_date DATE NOT NULL,
+    end_date DATE,
+    hours_allocated INTEGER,
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id),
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
-ALTER SEQUENCE public.payroll_id_seq OWNED BY public.payroll.id;
+-- Documents Table
+CREATE TABLE Documents (
+    document_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    document_type VARCHAR(50) NOT NULL,
+    upload_date DATE NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    description TEXT,
+    expiry_date DATE,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
+-- Users Table
+CREATE TABLE Users (
+    user_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    last_login TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
---
--- Name: attendance id; Type: DEFAULT; Schema: public; Owner: postgres
---
+-- Roles Table
+CREATE TABLE Roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT,
+    permissions JSONB
+);
 
-ALTER TABLE ONLY public.attendance ALTER COLUMN id SET DEFAULT nextval('public.attendance_id_seq'::regclass);
+-- User Roles Table (Junction Table)
+CREATE TABLE User_Roles (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    role_id INTEGER NOT NULL,
+    assigned_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (role_id) REFERENCES Roles(role_id)
+);
 
+-- Audit Logs Table
+CREATE TABLE AuditLogs (
+    log_id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    action VARCHAR(50) NOT NULL,
+    table_affected VARCHAR(50),
+    record_id VARCHAR(50),
+    old_value TEXT,
+    new_value TEXT,
+    ip_address VARCHAR(50),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
 
---
--- Name: employees id; Type: DEFAULT; Schema: public; Owner: postgres
---
+-- Shifts/Schedules Table
+CREATE TABLE Shifts (
+    shift_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    shift_type VARCHAR(50),
+    notes TEXT,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
-ALTER TABLE ONLY public.employees ALTER COLUMN id SET DEFAULT nextval('public.employee_id_seq'::regclass);
+-- Assets/Equipment Table
+CREATE TABLE Assets (
+    asset_id SERIAL PRIMARY KEY,
+    employee_id INTEGER,
+    asset_type VARCHAR(50) NOT NULL,
+    asset_name VARCHAR(100) NOT NULL,
+    serial_number VARCHAR(100) UNIQUE,
+    assignment_date DATE,
+    return_date DATE,
+    condition VARCHAR(50),
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);
 
+-- Promotions Table
+CREATE TABLE Promotions (
+    promotion_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    from_position_id INTEGER NOT NULL,
+    to_position_id INTEGER NOT NULL,
+    promotion_date DATE NOT NULL,
+    salary_increase DECIMAL(10,2),
+    reason TEXT,
+    recommended_by INTEGER,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id),
+    FOREIGN KEY (from_position_id) REFERENCES Positions(position_id),
+    FOREIGN KEY (to_position_id) REFERENCES Positions(position_id),
+    FOREIGN KEY (recommended_by) REFERENCES Employees(employee_id)
+);
 
---
--- Name: payroll id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.payroll ALTER COLUMN id SET DEFAULT nextval('public.payroll_id_seq'::regclass);
-
-
---
--- Data for Name: attendance; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.attendance (id, employee_id, date, check_in_time, check_out_time, status) FROM stdin;
-1	1	2025-04-01 00:00:00	2025-04-01 08:58:00	2025-04-01 17:05:00	Present
-2	1	2025-04-02 00:00:00	2025-04-02 09:15:00	2025-04-02 17:10:00	Late
-3	2	2025-04-01 00:00:00	2025-04-01 08:45:00	2025-04-01 16:50:00	Present
-4	3	2025-04-01 00:00:00	\N	\N	Absent
-\.
-
-
---
--- Data for Name: employees; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.employees (id, first_name, last_name, email, department, "position", salary, date_of_joining) FROM stdin;
-1	John	Doe	john.doe@example.com	Engineering	Software Engineer	75000.00	2024-01-15
-2	Jane	Smith	jane.smith@example.com	HR	HR Manager	65000.00	2023-11-20
-3	Mike	Johnson	mike.johnson@example.com	Sales	Sales Executive	55000.00	2024-02-10
-\.
-
-
---
--- Data for Name: payroll; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.payroll (id, employee_id, period_start, period_end, basic_salary, deductions, bonuses, net_salary, payment_date) FROM stdin;
-1	1	2025-03-01	2025-03-31	75000.00	1250.00	1000.00	74750.00	2025-04-05 00:00:00
-2	2	2025-03-01	2025-03-31	65000.00	850.00	500.00	64650.00	2025-04-05 00:00:00
-3	3	2025-03-01	2025-03-31	55000.00	750.00	300.00	54550.00	2025-04-05 00:00:00
-\.
-
-
---
--- Name: attendance_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.attendance_id_seq', 4, true);
-
-
---
--- Name: employee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.employee_id_seq', 3, true);
-
-
---
--- Name: payroll_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.payroll_id_seq', 3, true);
-
-
---
--- Name: attendance attendance_employee_id_date_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.attendance
-    ADD CONSTRAINT attendance_employee_id_date_key UNIQUE (employee_id, date);
-
-
---
--- Name: attendance attendance_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.attendance
-    ADD CONSTRAINT attendance_pkey PRIMARY KEY (id);
-
-
---
--- Name: employees employee_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.employees
-    ADD CONSTRAINT employee_email_key UNIQUE (email);
-
-
---
--- Name: employees employee_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.employees
-    ADD CONSTRAINT employee_pkey PRIMARY KEY (id);
-
-
---
--- Name: payroll payroll_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.payroll
-    ADD CONSTRAINT payroll_pkey PRIMARY KEY (id);
-
-
---
--- Name: attendance attendance_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.attendance
-    ADD CONSTRAINT attendance_employee_id_fkey FOREIGN KEY (employee_id) REFERENCES public.employees(id);
-
-
---
--- Name: payroll payroll_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.payroll
-    ADD CONSTRAINT payroll_employee_id_fkey FOREIGN KEY (employee_id) REFERENCES public.employees(id);
-
-
---
--- PostgreSQL database dump complete
---
-
+-- Resignations Table
+CREATE TABLE Resignations (
+    resignation_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL,
+    resignation_date DATE NOT NULL,
+    last_working_day DATE NOT NULL,
+    reason TEXT,
+    exit_interview_notes TEXT,
+    rehireable BOOLEAN DEFAULT TRUE,
+    handover_notes TEXT,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+);

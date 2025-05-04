@@ -1,0 +1,211 @@
+erDiagram
+    EMPLOYEES ||--o{ ATTENDANCE : logs
+    EMPLOYEES ||--o{ LEAVES : requests
+    EMPLOYEES ||--o{ PERFORMANCE : receives
+    EMPLOYEES ||--o{ TRAINING : undergoes
+    EMPLOYEES ||--o{ DOCUMENTS : uploads
+    EMPLOYEES ||--o{ ASSETS : assigned
+    EMPLOYEES }|--|| POSITIONS : holds
+    EMPLOYEES }|--|| DEPARTMENTS : belongs_to
+    EMPLOYEES ||--o{ SALARIES : receives
+    EMPLOYEES ||--o{ SHIFTS : works_on
+    EMPLOYEES ||--|| USERS : has_account
+    EMPLOYEES ||--o{ PROMOTIONS : receives
+    EMPLOYEES ||--o{ RESIGNATIONS : submits
+    
+    DEPARTMENTS ||--o{ POSITIONS : contains
+    
+    PROJECTS }|--o{ EMPLOYEEPROJECTS : has
+    EMPLOYEES }|--o{ EMPLOYEEPROJECTS : assigned_to
+    
+    USERS }|--o{ ROLES : assigned
+    USERS ||--o{ AUDIT_LOGS : generates
+    
+    EMPLOYEES {
+        int employee_id PK
+        string first_name
+        string last_name
+        string email
+        string phone
+        date date_of_birth
+        string address
+        date hire_date
+        string status
+        string emergency_contact
+        string reporting_manager_id FK
+    }
+    
+    DEPARTMENTS {
+        int department_id PK
+        string department_name
+        string location
+        int manager_id FK
+        string description
+    }
+    
+    POSITIONS {
+        int position_id PK
+        string job_title
+        string description
+        int department_id FK
+        decimal salary_grade
+        string responsibilities
+    }
+    
+    SALARIES {
+        int salary_id PK
+        int employee_id FK
+        decimal base_salary
+        decimal bonuses
+        decimal deductions
+        date effective_date
+        date end_date
+        string currency
+        string payment_type
+    }
+    
+    ATTENDANCE {
+        int attendance_id PK
+        int employee_id FK
+        datetime check_in
+        datetime check_out
+        string status
+        date attendance_date
+        string notes
+    }
+    
+    LEAVES {
+        int leave_id PK
+        int employee_id FK
+        date start_date
+        date end_date
+        string leave_type
+        string status
+        string reason
+        string approver_id FK
+    }
+    
+    PERFORMANCE {
+        int review_id PK
+        int employee_id FK
+        date review_date
+        string reviewer_id FK
+        int rating
+        string comments
+        string goals
+        date next_review_date
+    }
+    
+    TRAINING {
+        int training_id PK
+        int employee_id FK
+        string training_name
+        date start_date
+        date end_date
+        string provider
+        boolean completed
+        string certificate_id
+        date expiry_date
+    }
+    
+    PROJECTS {
+        int project_id PK
+        string project_name
+        date start_date
+        date end_date
+        string status
+        string description
+        int manager_id FK
+        decimal budget
+    }
+    
+    EMPLOYEEPROJECTS {
+        int id PK
+        int project_id FK
+        int employee_id FK
+        string role
+        date start_date
+        date end_date
+        int hours_allocated
+    }
+    
+    DOCUMENTS {
+        int document_id PK
+        int employee_id FK
+        string document_type
+        date upload_date
+        string file_path
+        string description
+        date expiry_date
+    }
+    
+    USERS {
+        int user_id PK
+        int employee_id FK
+        string username
+        string password_hash
+        datetime last_login
+        boolean is_active
+        string email
+    }
+    
+    AUDIT_LOGS {
+        int log_id PK
+        int user_id FK
+        datetime timestamp
+        string action
+        string table_affected
+        string record_id
+        string old_value
+        string new_value
+        string ip_address
+    }
+    
+    ROLES {
+        int role_id PK
+        string role_name
+        string description
+        json permissions
+    }
+    
+    SHIFTS {
+        int shift_id PK
+        int employee_id FK
+        datetime start_time
+        datetime end_time
+        string shift_type
+        string notes
+    }
+    
+    ASSETS {
+        int asset_id PK
+        int employee_id FK
+        string asset_type
+        string asset_name
+        string serial_number
+        date assignment_date
+        date return_date
+        string condition
+    }
+    
+    PROMOTIONS {
+        int promotion_id PK
+        int employee_id FK
+        int from_position_id FK
+        int to_position_id FK
+        date promotion_date
+        decimal salary_increase
+        string reason
+        int recommended_by FK
+    }
+    
+    RESIGNATIONS {
+        int resignation_id PK
+        int employee_id FK
+        date resignation_date
+        date last_working_day
+        string reason
+        string exit_interview_notes
+        boolean rehireable
+        string handover_notes
+    }
