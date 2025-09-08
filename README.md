@@ -133,7 +133,7 @@ ems/
 
 ## 📚 API Documentation
 
-Once the backend is running, you can access the API documentation at [API Documentation](https://github.com/jvcByte/ems/blob/main/README.md#api-documentation).
+Once the backend is running, you can access the API documentation at [API Documentation](API_DOCUMENTATION.md).
 
 ## 🔒 Authentication
 
