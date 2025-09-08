@@ -1,123 +1,203 @@
 # Employee Management System (EMS)
 
-## Overview
+## 📋 Overview
 
-The Employee Management System (EMS) is a full-stack web application designed to manage employee data, attendance, and payroll processes efficiently. The system is divided into three main components:
+The Employee Management System (EMS) is a full-stack web application designed to streamline HR processes including employee data management, attendance tracking, and payroll processing. The system provides a modern, responsive interface for administrators and HR personnel to efficiently manage organizational resources.
 
-- **Frontend**: A modern web interface for users to interact with the system.
-- **Backend**: A RESTful API server handling business logic and data processing.
-- **Database**: Stores persistent data for employees, attendance, and payroll.
+## 🚀 Features
 
----
+- **Employee Management**: Add, view, update, and deactivate employee records
+- **Attendance Tracking**: Record and monitor employee attendance and time tracking
+- **Payroll Processing**: Generate and manage employee payrolls
+- **User Authentication**: Secure login and role-based access control
+- **Dashboard**: Overview of key metrics and statistics
+- **Responsive Design**: Works on desktop and mobile devices
 
-## Project Structure
+## 🏗️ System Architecture
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │     │                 │
+│    Frontend     │◄───►│    Backend      │◄───►|   Database     |
+│  (Next.js)      │     |  (Spring Boot)  |     |  (PostgreSQL)  |
+│                 │     │                 │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: Next.js 14
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: React Query
+- **Authentication**: NextAuth.js
+- **UI Components**: Headless UI
+- **Form Handling**: React Hook Form
+- **Data Visualization**: Recharts
+
+### Backend
+- **Framework**: Spring Boot 3.2.x
+- **Language**: Java 17+
+- **Build Tool**: Maven
+- **Database**: PostgreSQL 15+
+- **API Documentation**: SpringDoc OpenAPI
+- **Authentication**: JWT (JSON Web Tokens)
+- **Validation**: Hibernate Validator
+
+### Database
+- **RDBMS**: PostgreSQL
+- **ORM**: Hibernate/JPA
+- **Migrations**: Flyway (or manual SQL scripts)
+
+## 📂 Project Structure
 
 ```
 ems/
 │
 ├── backend/          # Java Spring Boot backend API
-├── frontend/         # Next.js React frontend
-├── Database/         # SQL scripts for database schema and seed data
-├── README.md         # Project overview and instructions
-└── .git/             # Git version control
+│   ├── src/
+│   │   ├── main/java/com/example/ems/
+│   │   │   ├── config/        # Configuration classes
+│   │   │   ├── controller/    # REST controllers
+│   │   │   ├── model/         # Entity classes
+│   │   │   ├── repository/    # Data access layer
+│   │   │   ├── service/       # Business logic
+│   │   │   ├── security/      # Security configuration
+│   │   │   └── util/          # Utility classes
+│   │   └── resources/
+│   │       └── application.properties  # Application config
+│   └── pom.xml                # Maven configuration
+│
+├── frontend/         # Next.js frontend application
+│   ├── public/       # Static files
+│   └── src/
+│       ├── app/      # Next.js app directory
+│       │   ├── api/          # API route handlers
+│       │   ├── dashboard/    # Dashboard page
+│       │   ├── employees/    # Employee management
+│       │   ├── attendance/   # Attendance tracking
+│       │   ├── payroll/      # Payroll management
+│       │   └── login/        # Authentication
+│       ├── components/       # Reusable components
+│       ├── hooks/            # Custom React hooks
+│       ├── lib/              # Utilities and config
+│       └── types/            # TypeScript type definitions
+│
+└── Database/         # Database scripts
+    ├── ems_db.sql   # Database schema
+    └── seed_db.sql  # Initial data population
 ```
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ and npm 9+
+- Java 17 or higher
+- Maven 3.8+
+- PostgreSQL 15+
+- Git
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/jvcByte/ems.git
+   cd ems
+   ```
+
+2. **Set up the database**
+   - Create a new PostgreSQL database named `ems`
+   - Run the `Database/ems_db.sql` script to create the database schema
+   - Run the `Database/seed_db.sql` script to populate the database with initial data
+   - you can use pgAdmin or any other PostgreSQL client to connect to the database and run the scripts
+
+3. **Configure the backend**
+   - Navigate to the backend directory: `cd backend`
+   - Update the database connection in `src/main/resources/application.properties`, make sure to update the username and password
+   - Build the project: `mvn clean install`
+   - Run the application: `mvn spring-boot:run`
+   - The backend will be available at `http://localhost:8080`
+
+4. **Configure the frontend**
+   - Open a new terminal and navigate to the frontend directory: `cd ../frontend`
+   - Install dependencies: `npm install`
+   - Navigat to `frontend/src/lib/config.ts` and make sure the API_BASE_URL and AUTH_BASE_URL are configured like this:
+   ```
+   export const API_BASE_URL = 'http://localhost:8080/api';
+   export const AUTH_BASE_URL = 'http://localhost:8080';
+   ```
+   - Start the development server: `npm run dev`
+   - The frontend will be available at `http://localhost:3000`
+
+## 📚 API Documentation
+
+Once the backend is running, you can access the API documentation at [API Documentation](https://github.com/jvcByte/ems/blob/main/README.md#api-documentation).
+
+## 🔒 Authentication
+
+The system uses JWT (JSON Web Tokens) for session management. The frontend will handle the authentication process and store the token in the browser's local storage. The token will be automatically included in the Authorization header for subsequent requests. Please note that user verification is not implemented yet, so the login process is not secure. Just session management is implemented.
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+cd backend
+mvn test
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm run build
+```
+
+## 🧩 Environment Variables
+
+### Backend (application.properties)
+```properties
+# Server Configuration
+server.port=8080
+
+# Database Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/ems
+spring.datasource.username=your_db_username
+spring.datasource.password=your_db_password
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📫 Contact
+
+Project Link: [https://github.com/jvcByte/ems](https://github.com/jvcByte/ems)
+
+## 🙏 Acknowledgments
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [maven documentation](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)
+- [Java Documentation](https://docs.oracle.com/en/java/)
+- [NextAuth Documentation](https://next-auth.js.org)
+- [axios documentation](https://axios-http.com/docs/intro)
+- [OpenJDK Documentation](https://openjdk.org/)
+
 ---
 
-## Frontend
-
-**Path:** `frontend/`  
-**Tech Stack:** Next.js, React, TypeScript, Tailwind CSS
-
-### Key Files & Folders
-
-- `.env.local`: Environment variables for frontend.
-- `.gitignore`: Files/folders ignored by Git.
-- `.next/`: Build output (auto-generated).
-- `README.md`: Frontend-specific documentation.
-- `eslint.config.mjs`: ESLint configuration.
-- `next-env.d.ts`: TypeScript Next.js types.
-- `next.config.ts`: Next.js configuration.
-- `node_modules/`: Installed dependencies.
-- `package.json`, `package-lock.json`: Project dependencies and scripts.
-- `postcss.config.mjs`: PostCSS configuration.
-- `public/`: Static assets (e.g., images, favicon).
-- `src/`: Main source code.
-- `tailwind.config.js`: Tailwind CSS configuration.
-- `tsconfig.json`: TypeScript configuration.
-
-### `src/` Folder Details
-
-- `api/`: API utilities for frontend data fetching.
-- `app/`: Next.js app directory, contains:
-  - `api/`: Route handlers.
-  - `attendance/`, `payroll/`, `dashboard/`, `login/`: Pages and features.
-  - `globals.css`: Global styles.
-  - `layout.tsx`: Root layout component.
-  - `page.tsx`: Main landing page.
-- `components/`: Reusable React components (e.g., `Navbar`, `Sidebar`, `EmployeeTable`, `AttendanceChart`, `PayrollSummary`, `AuthCheck`, `ReactQueryProvider`, `NextAuthProvider`).
-- `hooks/`: Custom React hooks (`useAttendance.ts`, `useEmployees.ts`, `usePayroll.ts`) for data logic.
-- `lib/`: Shared utilities and configuration (`auth.ts`, `config.ts`).
-- `styles/`: (Not listed, but typically for custom CSS).
-- `types/`: TypeScript type definitions for attendance, employee, and payroll data.
-
----
-
-## Backend
-
-**Path:** `backend/`  
-**Tech Stack:** Java, Spring Boot, Maven
-
-### Key Files & Folders
-
-- `README.md`: Backend-specific documentation.
-- `pom.xml`: Maven build configuration.
-- `src/`: Main source code.
-- `target/`: Build output (auto-generated).
-
-### `src/main/java/com/employee/` Structure
-
-- `EmployeeManagementSystemApplication.java`: Application entry point.
-- `WebConfig.java`: Web configuration (e.g., CORS, interceptors).
-- `controller/`: REST controllers for handling HTTP requests:
-  - `AttendanceController.java`
-  - `EmployeeController.java`
-  - `PayrollController.java`
-- `model/`: Entity classes representing database tables:
-  - `Attendance.java`
-  - `Employee.java`
-  - `Payroll.java`
-- `repository/`: Spring Data JPA repositories for database access:
-  - `AttendanceRepository.java`
-  - `EmployeeRepository.java`
-  - `PayrollRepository.java`
-- `service/`: Business logic/services:
-  - `AttendanceService.java`
-  - `EmployeeService.java`
-  - `PayrollService.java`
-
-### `src/main/resources/`
-
-- Contains application configuration files (not listed in detail).
-
----
-
-## Database
-
-**Path:** `Database/`  
-**File:** `ems_db.sql`
-
-- Contains SQL scripts for creating and initializing the database schema, including tables for employees, attendance, and payroll.
-- Used to set up the underlying relational database (e.g., MySQL, PostgreSQL).
-
----
-
-## Summary
-
-- The **frontend** provides a user-friendly interface for managing employees, attendance, and payroll, built with Next.js and React.
-- The **backend** exposes RESTful APIs, handles business logic, and interacts with the database, built using Java Spring Boot.
-- The **database** schema is defined in SQL scripts, supporting persistent storage for all EMS data.
-
----
-
-For more details, see the `frontend/README.md` and `backend/README.md` files.
+<div align="center">
+  Made with ❤️ by jvcByte
+</div>
