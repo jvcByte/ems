@@ -36,7 +36,7 @@ backend/
 ```
 
 ## Technologies Used
-- Java
+- Java: openjdk 21.0.6 2025-01-21
 - Spring Boot
 - Spring Data JPA
 - Maven
