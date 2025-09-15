@@ -3,29 +3,9 @@
 ## Base URL
 All API endpoints are relative to: `http://localhost:8080/api`
 
-## Authentication
-All endpoints (except login) require authentication via JWT token. Include the token in the `Authorization` header:
-```
-Authorization: Bearer <your-jwt-token>
-```
-
 ## API Endpoints
 
-### 1. Authentication
-
-#### Login
-- **URL**: `/auth/login`
-- **Method**: `POST`
-- **Request Body**:
-  ```json
-  {
-    "username": "string",
-    "password": "string"
-  }
-  ```
-- **Response**: JWT token
-
-### 2. Employee Management
+### 1. Employee Management
 
 #### Employees
 - `GET /employees` - Get all employees
@@ -48,7 +28,7 @@ Authorization: Bearer <your-jwt-token>
 - `PUT /positions/{id}` - Update position
 - `DELETE /positions/{id}` - Delete position
 
-### 3. Project Management
+### 2. Project Management
 
 #### Projects
 - `GET /projects` - Get all projects
@@ -64,7 +44,7 @@ Authorization: Bearer <your-jwt-token>
 - `PUT /employee-projects/{id}` - Update assignment
 - `DELETE /employee-projects/{id}` - Remove assignment
 
-### 4. Attendance & Time Management
+### 3. Attendance & Time Management
 
 #### Attendances
 - `GET /attendances` - Get all attendance records
@@ -80,7 +60,7 @@ Authorization: Bearer <your-jwt-token>
 - `PUT /shifts/{id}` - Update shift
 - `DELETE /shifts/{id}` - Delete shift
 
-### 5. Payroll & Benefits
+### 4. Payroll & Benefits
 
 #### Payrolls
 - `GET /payrolls` - Get all payroll records
@@ -96,7 +76,7 @@ Authorization: Bearer <your-jwt-token>
 - `PUT /promotions/{id}` - Update promotion
 - `DELETE /promotions/{id}` - Delete promotion
 
-### 6. Training & Development
+### 5. Training & Development
 
 #### Trainings
 - `GET /trainings` - Get all training programs
@@ -105,7 +85,7 @@ Authorization: Bearer <your-jwt-token>
 - `PUT /trainings/{id}` - Update training
 - `DELETE /trainings/{id}` - Delete training
 
-### 7. System Administration
+### 6. System Administration
 
 #### Users
 - `GET /users` - Get all users
@@ -128,7 +108,7 @@ Authorization: Bearer <your-jwt-token>
 - `PUT /user-roles/{id}` - Update assignment
 - `DELETE /user-roles/{id}` - Remove role from user
 
-### 8. Document Management
+### 7. Document Management
 
 #### Documents
 - `GET /documents` - Get all documents
@@ -137,7 +117,7 @@ Authorization: Bearer <your-jwt-token>
 - `PUT /documents/{id}` - Update document
 - `DELETE /documents/{id}` - Delete document
 
-### 9. Audit & Compliance
+### 8. Audit & Compliance
 
 #### Audit Logs
 - `GET /audit-logs` - Get all audit logs
@@ -167,9 +147,11 @@ Authorization: Bearer <your-jwt-token>
 ### Error Response
 ```json
 {
-  "error": "Error message",
+  "timestamp": "2025-09-15T10:02:05.371+00:00",
   "status": 400,
-  "timestamp": "2025-09-08T20:31:14.000+00:00",
+  "error": "Error message",
+  "trace": "Stack trace",
+  "message": "Error message",
   "path": "/api/endpoint"
 }
 ```
@@ -182,12 +164,3 @@ Authorization: Bearer <your-jwt-token>
 - `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: Resource not found
 - `500 Internal Server Error`: Server error
-
-## Rate Limiting
-API is rate limited to 1000 requests per hour per IP address.
-
-## Versioning
-Current API version: `v1`
-
-## Support
-For support, please contact support@ems.example.com
