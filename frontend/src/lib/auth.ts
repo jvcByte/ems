@@ -6,13 +6,13 @@ import { AUTH_BASE_URL } from "@/lib/config";
 
 /**
  * Authentication options for NextAuth.
- * 
+ *
  * This configuration defines the authentication providers and session strategy.
  */
 export const authOptions: AuthOptions = {
   /**
    * List of authentication providers.
-   * 
+   *
    * In this case, we're using the CredentialsProvider, which allows users to log in with a username and password.
    */
   providers: [
@@ -30,7 +30,7 @@ export const authOptions: AuthOptions = {
       },
       /**
        * Function that checks the user's credentials and returns the user's data if they're valid.
-       * 
+       *
        * In this case, we're making a GET request to a protected endpoint to test the credentials.
        */
       async authorize(credentials) {
@@ -43,7 +43,7 @@ export const authOptions: AuthOptions = {
                 username: credentials?.username || "",
                 password: credentials?.password || "",
               },
-            }
+            },
           );
           if (response.status === 200) {
             return { id: "1", name: credentials?.username };
@@ -57,13 +57,13 @@ export const authOptions: AuthOptions = {
   ],
   /**
    * Session strategy.
-   * 
+   *
    * In this case, we're using the JWT strategy, which stores the user's data in a JSON Web Token.
    */
   session: { strategy: "jwt" },
   /**
    * Custom pages for authentication.
-   * 
+   *
    * In this case, we're defining a custom sign-in page.
    */
   pages: {
