@@ -3,9 +3,27 @@
 
 // Dummy data for illustration; replace with real API call
 const dummyPayroll = [
-  { id: 1, name: "Alice Smith", month: "April 2025", amount: "$3,000", status: "Paid" },
-  { id: 2, name: "Bob Johnson", month: "April 2025", amount: "$2,800", status: "Pending" },
-  { id: 3, name: "Carol Lee", month: "April 2025", amount: "$3,200", status: "Paid" },
+  {
+    id: 1,
+    name: "Alice Smith",
+    month: "April 2025",
+    amount: "$3,000",
+    status: "Paid",
+  },
+  {
+    id: 2,
+    name: "Bob Johnson",
+    month: "April 2025",
+    amount: "$2,800",
+    status: "Pending",
+  },
+  {
+    id: 3,
+    name: "Carol Lee",
+    month: "April 2025",
+    amount: "$3,200",
+    status: "Paid",
+  },
 ];
 
 export default function PayrollPage() {
@@ -26,11 +44,18 @@ export default function PayrollPage() {
         </thead>
         <tbody>
           {payroll.map((rec) => (
-            <tr key={rec.id} className="border-t border-blue-100 hover:bg-blue-50">
+            <tr
+              key={rec.id}
+              className="border-t border-blue-100 hover:bg-blue-50"
+            >
               <td className="p-2 text-blue-700 font-medium">{rec.name}</td>
               <td className="p-2 text-blue-700">{rec.month}</td>
               <td className="p-2 text-blue-700">{rec.amount}</td>
-              <td className={`p-2 font-semibold ${rec.status === "Paid" ? "text-green-600" : "text-yellow-600"}`}>{rec.status}</td>
+              <td
+                className={`p-2 font-semibold ${rec.status === "Paid" ? "text-green-600" : "text-yellow-600"}`}
+              >
+                {rec.status}
+              </td>
             </tr>
           ))}
         </tbody>

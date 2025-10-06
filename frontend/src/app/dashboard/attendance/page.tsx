@@ -25,10 +25,17 @@ export default function AttendancePage() {
         </thead>
         <tbody>
           {attendance.map((rec) => (
-            <tr key={rec.id} className="border-t border-blue-100 hover:bg-blue-50">
+            <tr
+              key={rec.id}
+              className="border-t border-blue-100 hover:bg-blue-50"
+            >
               <td className="p-2 text-blue-700 font-medium">{rec.name}</td>
               <td className="p-2 text-blue-700">{rec.date}</td>
-              <td className={`p-2 font-semibold ${rec.status === "Present" ? "text-green-600" : "text-red-600"}`}>{rec.status}</td>
+              <td
+                className={`p-2 font-semibold ${rec.status === "Present" ? "text-green-600" : "text-red-600"}`}
+              >
+                {rec.status}
+              </td>
             </tr>
           ))}
         </tbody>
