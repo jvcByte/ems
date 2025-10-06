@@ -12,15 +12,15 @@ erDiagram
     EMPLOYEES ||--|| USERS : has_account
     EMPLOYEES ||--o{ PROMOTIONS : receives
     EMPLOYEES ||--o{ RESIGNATIONS : submits
-    
+
     DEPARTMENTS ||--o{ POSITIONS : contains
-    
+
     PROJECTS }|--o{ EMPLOYEE_PROJECTS : has
     EMPLOYEES }|--o{ EMPLOYEE_PROJECTS : assigned_to
-    
+
     USERS }|--o{ ROLES : assigned
     USERS ||--o{ AUDIT_LOGS : generates
-    
+
     EMPLOYEES {
         int employee_id PK
         string first_name
@@ -34,7 +34,7 @@ erDiagram
         string emergency_contact
         string reporting_manager_id FK
     }
-    
+
     DEPARTMENTS {
         int department_id PK
         string department_name
@@ -42,7 +42,7 @@ erDiagram
         int manager_id FK
         string description
     }
-    
+
     POSITIONS {
         int position_id PK
         string job_title
@@ -51,7 +51,7 @@ erDiagram
         decimal salary_grade
         string responsibilities
     }
-    
+
     SALARIES {
         int salary_id PK
         int employee_id FK
@@ -63,7 +63,7 @@ erDiagram
         string currency
         string payment_type
     }
-    
+
     ATTENDANCE {
         int attendance_id PK
         int employee_id FK
@@ -73,7 +73,7 @@ erDiagram
         date attendance_date
         string notes
     }
-    
+
     LEAVES {
         int leave_id PK
         int employee_id FK
@@ -84,7 +84,7 @@ erDiagram
         string reason
         string approver_id FK
     }
-    
+
     PERFORMANCE {
         int review_id PK
         int employee_id FK
@@ -95,7 +95,7 @@ erDiagram
         string goals
         date next_review_date
     }
-    
+
     TRAINING {
         int training_id PK
         int employee_id FK
@@ -107,7 +107,7 @@ erDiagram
         string certificate_id
         date expiry_date
     }
-    
+
     PROJECTS {
         int project_id PK
         string project_name
@@ -118,7 +118,7 @@ erDiagram
         int manager_id FK
         decimal budget
     }
-    
+
     EMPLOYEE_PROJECTS {
         int id PK
         int project_id FK
@@ -128,7 +128,7 @@ erDiagram
         date end_date
         int hours_allocated
     }
-    
+
     DOCUMENTS {
         int document_id PK
         int employee_id FK
@@ -138,7 +138,7 @@ erDiagram
         string description
         date expiry_date
     }
-    
+
     USERS {
         int user_id PK
         int employee_id FK
@@ -148,7 +148,7 @@ erDiagram
         boolean is_active
         string email
     }
-    
+
     AUDIT_LOGS {
         int log_id PK
         int user_id FK
@@ -160,14 +160,14 @@ erDiagram
         string new_value
         string ip_address
     }
-    
+
     ROLES {
         int role_id PK
         string role_name
         string description
         json permissions
     }
-    
+
     SHIFTS {
         int shift_id PK
         int employee_id FK
@@ -176,7 +176,7 @@ erDiagram
         string shift_type
         string notes
     }
-    
+
     ASSETS {
         int asset_id PK
         int employee_id FK
@@ -187,7 +187,7 @@ erDiagram
         date return_date
         string condition
     }
-    
+
     PROMOTIONS {
         int promotion_id PK
         int employee_id FK
@@ -198,7 +198,7 @@ erDiagram
         string reason
         int recommended_by FK
     }
-    
+
     RESIGNATIONS {
         int resignation_id PK
         int employee_id FK
