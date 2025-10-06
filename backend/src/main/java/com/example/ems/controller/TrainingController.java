@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Training;
 import com.example.ems.service.TrainingService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/trainings")
 public class TrainingController {
+
     @Autowired
     private TrainingService trainingService;
 
@@ -21,9 +21,10 @@ public class TrainingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Training> getTrainingById(@PathVariable Long id) {
-        return trainingService.getTrainingById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return trainingService
+            .getTrainingById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,9 +33,15 @@ public class TrainingController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Training> updateTraining(@PathVariable Long id, @RequestBody Training trainingDetails) {
+    public ResponseEntity<Training> updateTraining(
+        @PathVariable Long id,
+        @RequestBody Training trainingDetails
+    ) {
         try {
-            Training updated = trainingService.updateTraining(id, trainingDetails);
+            Training updated = trainingService.updateTraining(
+                id,
+                trainingDetails
+            );
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

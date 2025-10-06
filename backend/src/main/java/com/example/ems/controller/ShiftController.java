@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Shift;
 import com.example.ems.service.ShiftService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/shifts")
 public class ShiftController {
+
     @Autowired
     private ShiftService shiftService;
 
@@ -21,9 +21,10 @@ public class ShiftController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Shift> getShiftById(@PathVariable Long id) {
-        return shiftService.getShiftById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return shiftService
+            .getShiftById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,7 +33,10 @@ public class ShiftController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Shift> updateShift(@PathVariable Long id, @RequestBody Shift shiftDetails) {
+    public ResponseEntity<Shift> updateShift(
+        @PathVariable Long id,
+        @RequestBody Shift shiftDetails
+    ) {
         try {
             Shift updated = shiftService.updateShift(id, shiftDetails);
             return ResponseEntity.ok(updated);
