@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Performance;
 import com.example.ems.service.PerformanceService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/performances")
 public class PerformanceController {
+
     @Autowired
     private PerformanceService performanceService;
 
@@ -20,10 +20,13 @@ public class PerformanceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Performance> getPerformanceById(@PathVariable Long id) {
-        return performanceService.getPerformanceById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Performance> getPerformanceById(
+        @PathVariable Long id
+    ) {
+        return performanceService
+            .getPerformanceById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,9 +35,15 @@ public class PerformanceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Performance> updatePerformance(@PathVariable Long id, @RequestBody Performance performanceDetails) {
+    public ResponseEntity<Performance> updatePerformance(
+        @PathVariable Long id,
+        @RequestBody Performance performanceDetails
+    ) {
         try {
-            Performance updated = performanceService.updatePerformance(id, performanceDetails);
+            Performance updated = performanceService.updatePerformance(
+                id,
+                performanceDetails
+            );
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

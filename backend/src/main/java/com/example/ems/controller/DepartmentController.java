@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Department;
 import com.example.ems.service.DepartmentService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/departments")
 public class DepartmentController {
+
     @Autowired
     private DepartmentService departmentService;
 
@@ -21,9 +21,10 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Department> getDepartmentById(@PathVariable Long id) {
-        return departmentService.getDepartmentById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return departmentService
+            .getDepartmentById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,9 +33,15 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody Department departmentDetails) {
+    public ResponseEntity<Department> updateDepartment(
+        @PathVariable Long id,
+        @RequestBody Department departmentDetails
+    ) {
         try {
-            Department updated = departmentService.updateDepartment(id, departmentDetails);
+            Department updated = departmentService.updateDepartment(
+                id,
+                departmentDetails
+            );
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

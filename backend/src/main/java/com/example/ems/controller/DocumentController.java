@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Document;
 import com.example.ems.service.DocumentService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentController {
+
     @Autowired
     private DocumentService documentService;
 
@@ -21,9 +21,10 @@ public class DocumentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Document> getDocumentById(@PathVariable Long id) {
-        return documentService.getDocumentById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return documentService
+            .getDocumentById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,9 +33,15 @@ public class DocumentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Document> updateDocument(@PathVariable Long id, @RequestBody Document documentDetails) {
+    public ResponseEntity<Document> updateDocument(
+        @PathVariable Long id,
+        @RequestBody Document documentDetails
+    ) {
         try {
-            Document updated = documentService.updateDocument(id, documentDetails);
+            Document updated = documentService.updateDocument(
+                id,
+                documentDetails
+            );
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

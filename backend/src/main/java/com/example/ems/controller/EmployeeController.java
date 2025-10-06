@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Employee;
 import com.example.ems.service.EmployeeService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
+
     @Autowired
     private EmployeeService employeeService;
 
@@ -21,9 +21,10 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        return employeeService.getEmployeeById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return employeeService
+            .getEmployeeById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,9 +33,15 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employeeDetails) {
+    public ResponseEntity<Employee> updateEmployee(
+        @PathVariable Long id,
+        @RequestBody Employee employeeDetails
+    ) {
         try {
-            Employee updated = employeeService.updateEmployee(id, employeeDetails);
+            Employee updated = employeeService.updateEmployee(
+                id,
+                employeeDetails
+            );
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

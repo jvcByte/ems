@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Asset;
 import com.example.ems.service.AssetService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/assets")
 public class AssetController {
+
     @Autowired
     private AssetService assetService;
 
@@ -21,9 +21,10 @@ public class AssetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Asset> getAssetById(@PathVariable Long id) {
-        return assetService.getAssetById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return assetService
+            .getAssetById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,7 +33,10 @@ public class AssetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Asset> updateAsset(@PathVariable Long id, @RequestBody Asset assetDetails) {
+    public ResponseEntity<Asset> updateAsset(
+        @PathVariable Long id,
+        @RequestBody Asset assetDetails
+    ) {
         try {
             Asset updated = assetService.updateAsset(id, assetDetails);
             return ResponseEntity.ok(updated);

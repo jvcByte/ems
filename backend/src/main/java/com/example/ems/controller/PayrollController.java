@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Payroll;
 import com.example.ems.service.PayrollService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/payrolls")
 public class PayrollController {
+
     @Autowired
     private PayrollService payrollService;
 
@@ -21,9 +21,10 @@ public class PayrollController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Payroll> getPayrollById(@PathVariable Long id) {
-        return payrollService.getPayrollById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return payrollService
+            .getPayrollById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,7 +33,10 @@ public class PayrollController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Payroll> updatePayroll(@PathVariable Long id, @RequestBody Payroll payrollDetails) {
+    public ResponseEntity<Payroll> updatePayroll(
+        @PathVariable Long id,
+        @RequestBody Payroll payrollDetails
+    ) {
         try {
             Payroll updated = payrollService.updatePayroll(id, payrollDetails);
             return ResponseEntity.ok(updated);

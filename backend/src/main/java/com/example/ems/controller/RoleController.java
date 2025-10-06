@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Role;
 import com.example.ems.service.RoleService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
+
     @Autowired
     private RoleService roleService;
 
@@ -21,9 +21,10 @@ public class RoleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
-        return roleService.getRoleById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return roleService
+            .getRoleById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,7 +33,10 @@ public class RoleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Role> updateRole(@PathVariable Long id, @RequestBody Role roleDetails) {
+    public ResponseEntity<Role> updateRole(
+        @PathVariable Long id,
+        @RequestBody Role roleDetails
+    ) {
         try {
             Role updated = roleService.updateRole(id, roleDetails);
             return ResponseEntity.ok(updated);

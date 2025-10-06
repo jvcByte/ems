@@ -2,15 +2,15 @@ package com.example.ems.controller;
 
 import com.example.ems.entity.Leave;
 import com.example.ems.service.LeaveService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/leaves")
 public class LeaveController {
+
     @Autowired
     private LeaveService leaveService;
 
@@ -21,9 +21,10 @@ public class LeaveController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Leave> getLeaveById(@PathVariable Long id) {
-        return leaveService.getLeaveById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return leaveService
+            .getLeaveById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -32,7 +33,10 @@ public class LeaveController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Leave> updateLeave(@PathVariable Long id, @RequestBody Leave leaveDetails) {
+    public ResponseEntity<Leave> updateLeave(
+        @PathVariable Long id,
+        @RequestBody Leave leaveDetails
+    ) {
         try {
             Leave updated = leaveService.updateLeave(id, leaveDetails);
             return ResponseEntity.ok(updated);
